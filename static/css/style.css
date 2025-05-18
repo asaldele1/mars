@@ -17,3 +17,20 @@ h4 {
 .distribution-title {
     text-align: center;
 }
+
+th {
+    text-align: center;
+}
+
+.table-title {
+    text-align: center;
+}
+
+.wall-color {
+    width: 200px;
+    height: 300px;
+}
+
+.table-header {
+    background-color: lightgray;
+}

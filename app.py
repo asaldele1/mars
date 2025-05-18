@@ -75,5 +75,19 @@ def distribution():
     return render_template("distribution.html", astronauts=crew)
 
 
+@app.route("/table/<gender>/<int:age>")
+def cabin_decor(gender: str, age: int):
+    if gender == "female":
+        wall_color = "#FFA07A" if age < 21 else "#FF4500"
+    else:
+        wall_color = "#B0C4DE" if age < 21 else "#007FF0"
+
+    alien_image = "alien_young.png" if age < 21 else "alien_old.png"
+
+    return render_template("table.html",
+                           wall_color=wall_color,
+                           alien_image=alien_image)
+
+
 if __name__ == "__main__":
     app.run(port=8080)

@@ -1,0 +1,21 @@
+{% extends "base.html" %} {% block content %}
+<h3 class="table-title">Оформление каюты</h3>
+<table style="margin: 0 auto">
+  <tr class="table-header">
+    <th>Цвет стен</th>
+    <th>Эмблема</th>
+  </tr>
+  <tr>
+    <td 
+        class="wall-color"
+        style="background-color: {{ wall_color }};"></td>
+    <td>
+      <img
+        src="{{ url_for('static', filename='img/' + alien_image) }}"
+        height="300"
+        alt="Марсианин"
+      />
+    </td>
+  </tr>
+</table>
+{% endblock %}
