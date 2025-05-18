@@ -1,5 +1,6 @@
 import json
 from flask_login import LoginManager, login_required, login_user, logout_user
+import add_job
 from data.jobs import Jobs
 from data import db_session
 import os
@@ -8,8 +9,7 @@ from flask import Blueprint, Flask, redirect, render_template, request, url_for
 from werkzeug.utils import secure_filename
 
 from data.users import User
-from forms.login import LoginForm
-from forms.register import RegisterForm
+import auth
 
 CAROUSEL_FOLDER = os.path.join(os.path.dirname(
     __file__), 'static', 'img', 'carousel')
@@ -69,51 +69,6 @@ def auto_answer():
     }
 
     return render_template("auto_answer.html", **param)
-
-
-@bp.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        db_sess = db_session.create_session()
-        user = db_sess.query(User).filter(
-            User.email == form.email.data).first()
-        if user and user.check_password(form.password.data):
-            login_user(user, remember=form.remember_me.data)
-            return redirect("/")
-        return render_template('login.html', message="Неправильный логин или пароль", form=form)
-    return render_template('login.html', title='Авторизация', form=form)
-
-
-@bp.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect("/")
-
-
-@bp.route("/register", methods=['GET', 'POST'])
-def register():
-    form = RegisterForm()
-    if form.validate_on_submit():
-        session = db_session.create_session()
-        if session.query(User).filter(User.email == form.email.data).first():
-            form.email.errors.append('Email уже зарегистрирован')
-            return render_template('register.html', title='Регистрация', form=form)
-        user = User(
-            email=form.email.data,
-            surname=form.surname.data,
-            name=form.name.data,
-            age=form.age.data,
-            position=form.position.data,
-            speciality=form.speciality.data,
-            address=form.address.data
-        )
-        user.set_password(form.password.data)
-        session.add(user)
-        session.commit()
-        return redirect(url_for('main.login'))
-    return render_template('register.html', title='Регистрация', form=form)
 
 
 @bp.route("/distribution")
@@ -189,6 +144,8 @@ def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
     app.register_blueprint(bp)
+    app.register_blueprint(auth.bp)
+    app.register_blueprint(add_job.bp)
     db_session.global_init("db/mars_explorer.db")
     login_manager.init_app(app)
     return app
