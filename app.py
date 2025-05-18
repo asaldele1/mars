@@ -56,9 +56,24 @@ def login():
         return redirect("/success")
     return render_template("login.html", title="Авариный доступ", form=form)
 
+
 @app.route("/success")
 def success():
     return render_template("success.html", title="Успех")
+
+
+@app.route("/distribution")
+def distribution():
+    crew = [
+        "Ридли Скотт",
+        "Энди Уир",
+        "Марка Уотни",
+        "Венката Капур",
+        "Тедди Сандерс",
+        "Шон Бин"
+    ]
+    return render_template("distribution.html", astronauts=crew)
+
 
 if __name__ == "__main__":
     app.run(port=8080)

@@ -13,3 +13,7 @@ h4 {
     background-image: url('../img/emblem.png');
     background-repeat: no-repeat;
 }
+
+.distribution-title {
+    text-align: center;
+}
