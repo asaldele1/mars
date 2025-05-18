@@ -1,3 +1,5 @@
+import json
+import random
 from flask import Flask, redirect, render_template, url_for
 
 from forms.login import LoginForm
@@ -87,6 +89,14 @@ def cabin_decor(gender: str, age: int):
     return render_template("table.html",
                            wall_color=wall_color,
                            alien_image=alien_image)
+
+
+@app.route("/member")
+def show_member():
+    with open("templates/crew.json", encoding="utf-8") as f:
+        crew = json.load(f)
+    member = random.choice(crew)
+    return render_template("member.html", member=member)
 
 
 if __name__ == "__main__":
