@@ -2,3 +2,14 @@ h4 {
     color: #cccccc;
     padding-left: 20px;
 }
+
+.add-emblem::before {
+    content: "";
+    display: inline-block;
+    margin-right: 8px;
+    width: 150px;
+    height: 50px;
+    vertical-align: middle;
+    background-image: url('../img/emblem.png');
+    background-repeat: no-repeat;
+}
