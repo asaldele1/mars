@@ -1,7 +1,7 @@
 from flask import Flask, render_template, url_for
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
+app.config["SECRET_KEY"] = "yandexlyceum_secret_key"
 
 
 @app.route("/index/<title>")
@@ -15,10 +15,10 @@ def training(prof: str):
     prof = prof.lower()
     if "инженер" in prof or "строитель" in prof:
         tr = "Инженерные тренажеры"
-        image = url_for('static', filename='img/engineer.jpg')
+        image = url_for("static", filename="img/engineer.jpg")
     else:
         tr = "Научные симуляторы"
-        image = url_for('static', filename='img/simulators.jpg')
+        image = url_for("static", filename="img/simulators.jpg")
     return render_template("training.html", training=tr, image=image)
 
 
@@ -30,5 +30,22 @@ def list_prof(list_type: str):
         return render_template("error.html", error="Неизвестный тип списка")
 
 
-if __name__ == '__main__':
+@app.route("/answer")
+@app.route("/auto_answer")
+def auto_answer():
+    param = {
+        "surname": "Watny",
+        "name": "Mark",
+        "education": "выше среднего",
+        "profession": "штурман марсохода",
+        "sex": "male",
+        "motivation": "Всегда мечтал застрять на Марсе!",
+        "ready": str(True),
+        "title": "Анкета"
+    }
+
+    return render_template("auto_answer.html", **param)
+
+
+if __name__ == "__main__":
     app.run(port=8080)

@@ -1,0 +1,13 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-4">
+  <div class="list-group">
+    <div class="list-group-item">Фамилия: {{ surname }}</div>
+    <div class="list-group-item">Имя: {{ name }}</div>
+    <div class="list-group-item">Образование: {{ education }}</div>
+    <div class="list-group-item">Профессия: {{ profession }}</div>
+    <div class="list-group-item">Пол: {{ sex }}</div>
+    <div class="list-group-item">Мотивация: {{ motivation }}</div>
+    <div class="list-group-item">Готовы остаться на Марсе? {{ ready }}</div>
+  </div>
+</div>
+{% endblock %}
