@@ -64,3 +64,35 @@ form.upload-paysages {
     border-radius: 5px;
     padding: 10px;
 }
+
+/* Стиль заголовка журнала работ */
+.works-log-title {
+    text-align: center;
+    margin-bottom: 1em;
+}
+
+/* Основная таблица журнала работ */
+.works-log-table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 2em;
+    table-layout: fixed;
+}
+
+.works-log-table th,
+.works-log-table td {
+    padding: 8px;
+    text-align: left;
+}
+
+.works-log-table tr.header-row {
+    background-color: #ddd;
+}
+
+.works-log-table tr.body-row {
+    background-color: #eef;
+}
+
+.works-log-table td.not-finished {
+    background-color: #fdd;
+}
