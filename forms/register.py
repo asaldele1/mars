@@ -3,13 +3,13 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, EqualTo, Length
 
 class RegisterForm(FlaskForm):
-    email = StringField('Login / email', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
-    password2 = PasswordField('Repeat password', validators=[DataRequired(), EqualTo('password', message='Passwords must match')])
-    surname = StringField('Surname', validators=[DataRequired()])
-    name = StringField('Name', validators=[DataRequired()])
-    age = StringField('Age', validators=[DataRequired()])
-    position = StringField('Position', validators=[DataRequired()])
-    speciality = StringField('Speciality', validators=[DataRequired()])
-    address = StringField('Address', validators=[DataRequired()])
-    submit = SubmitField('Register')
+    email = StringField('Логин / email', validators=[DataRequired()])
+    password = PasswordField('Пароль', validators=[DataRequired(), Length(min=8)])
+    password2 = PasswordField('Повторите пароль', validators=[DataRequired(), EqualTo('password', message='Пароли должны совпадать')])
+    surname = StringField('Фамилия', validators=[DataRequired()])
+    name = StringField('Имя', validators=[DataRequired()])
+    age = StringField('Возраст', validators=[DataRequired()])
+    position = StringField('Должность', validators=[DataRequired()])
+    speciality = StringField('Специальность', validators=[DataRequired()])
+    address = StringField('Адрес', validators=[DataRequired()])
+    submit = SubmitField('Зарегистрироваться')

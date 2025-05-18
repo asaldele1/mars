@@ -1,3 +1,5 @@
+import json
+from flask_login import LoginManager, login_required, login_user, logout_user
 from data.jobs import Jobs
 from data import db_session
 import os
@@ -15,6 +17,7 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 DB_PATH = os.path.join(os.path.dirname(__file__), 'mars.db')
 
 bp = Blueprint('main', __name__)
+login_manager = LoginManager()
 
 
 def allowed_file(filename):
@@ -22,7 +25,14 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+@login_manager.user_loader
+def load_user(user_id: int):
+    db_sess = db_session.create_session()
+    return db_sess.query(User).get(user_id)
+
+
 @bp.route("/training/<prof>")
+@login_required
 def training(prof: str):
     prof = prof.lower()
     if "инженер" in prof or "строитель" in prof:
@@ -35,6 +45,7 @@ def training(prof: str):
 
 
 @bp.route("/list_prof/<list_type>")
+@login_required
 def list_prof(list_type: str):
     if list_type in ("ol", "ul"):
         return render_template("list_prof.html", list_type=list_type)
@@ -44,6 +55,7 @@ def list_prof(list_type: str):
 
 @bp.route("/answer")
 @bp.route("/auto_answer")
+@login_required
 def auto_answer():
     param = {
         "surname": "Watny",
@@ -59,12 +71,25 @@ def auto_answer():
     return render_template("auto_answer.html", **param)
 
 
-@bp.route("/login", methods=["GET", "POST"])
+@bp.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        return redirect("/success")
-    return render_template("login.html", title="Авариный доступ", form=form)
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(
+            User.email == form.email.data).first()
+        if user and user.check_password(form.password.data):
+            login_user(user, remember=form.remember_me.data)
+            return redirect("/")
+        return render_template('login.html', message="Неправильный логин или пароль", form=form)
+    return render_template('login.html', title='Авторизация', form=form)
+
+
+@bp.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
 
 
 @bp.route("/register", methods=['GET', 'POST'])
@@ -87,16 +112,12 @@ def register():
         user.set_password(form.password.data)
         session.add(user)
         session.commit()
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.login'))
     return render_template('register.html', title='Регистрация', form=form)
 
 
-@bp.route("/success")
-def success():
-    return render_template("success.html", title="Успех")
-
-
 @bp.route("/distribution")
+@login_required
 def distribution():
     crew = [
         "Ридли Скотт",
@@ -110,6 +131,7 @@ def distribution():
 
 
 @bp.route("/table/<gender>/<int:age>")
+@login_required
 def cabin_decor(gender: str, age: int):
     if gender == "female":
         wall_color = "#FFA07A" if age < 21 else "#FF4500"
@@ -124,6 +146,7 @@ def cabin_decor(gender: str, age: int):
 
 
 @bp.route("/member")
+@login_required
 def show_member():
     with open("templates/crew.json", encoding="utf-8") as f:
         crew = json.load(f)
@@ -132,6 +155,7 @@ def show_member():
 
 
 @bp.route('/gallery', methods=['GET', 'POST'])
+@login_required
 def gallery():
     if request.method == 'POST':
         file = request.files.get('file')
@@ -166,6 +190,7 @@ def create_app():
     app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
     app.register_blueprint(bp)
     db_session.global_init("db/mars_explorer.db")
+    login_manager.init_app(app)
     return app
 
 
