@@ -7,6 +7,7 @@ from werkzeug.utils import secure_filename
 
 from data.users import User
 from forms.login import LoginForm
+from forms.register import RegisterForm
 
 CAROUSEL_FOLDER = os.path.join(os.path.dirname(
     __file__), 'static', 'img', 'carousel')
@@ -66,6 +67,30 @@ def login():
     return render_template("login.html", title="Авариный доступ", form=form)
 
 
+@bp.route("/register", methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        session = db_session.create_session()
+        if session.query(User).filter(User.email == form.email.data).first():
+            form.email.errors.append('Email уже зарегистрирован')
+            return render_template('register.html', title='Регистрация', form=form)
+        user = User(
+            email=form.email.data,
+            surname=form.surname.data,
+            name=form.name.data,
+            age=form.age.data,
+            position=form.position.data,
+            speciality=form.speciality.data,
+            address=form.address.data
+        )
+        user.set_password(form.password.data)
+        session.add(user)
+        session.commit()
+        return redirect(url_for('main.index'))
+    return render_template('register.html', title='Регистрация', form=form)
+
+
 @bp.route("/success")
 def success():
     return render_template("success.html", title="Успех")
@@ -119,7 +144,7 @@ def gallery():
 
 
 @bp.route('/')
-def works_log():
+def index():
     session = db_session.create_session()
     jobs_query = session.query(Jobs, User).join(
         User, Jobs.team_leader == User.id)
