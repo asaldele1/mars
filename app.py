@@ -1,11 +1,24 @@
 import json
+import os
 import random
-from flask import Flask, redirect, render_template, url_for
+from flask import Flask, redirect, render_template, request, url_for
+from werkzeug.utils import secure_filename
 
 from forms.login import LoginForm
 
+UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'static', 'img')
+CAROUSEL_FOLDER = os.path.join(os.path.dirname(
+    __file__), 'static', 'img', 'carousel')
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "yandexlyceum_secret_key"
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @app.route("/index/<title>")
@@ -99,5 +112,17 @@ def show_member():
     return render_template("member.html", member=member)
 
 
+@app.route('/gallery', methods=['GET', 'POST'])
+def gallery():
+    if request.method == 'POST':
+        file = request.files.get('file')
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(CAROUSEL_FOLDER, filename))
+        return redirect(url_for('gallery'))
+    images = sorted(os.listdir(CAROUSEL_FOLDER))
+    return render_template('gallery.html', images=images)
+
+
 if __name__ == "__main__":
-    app.run(port=8080)
+    app.run(port=8080, debug=True)

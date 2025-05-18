@@ -1,0 +1,44 @@
+{% extends "base.html" %} {% block content %}
+<h1 class="text-center">Пейзажи Марса</h1>
+{% if images %}
+<div id="paysages" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-inner">
+    {% for img in images %}
+    <div class="carousel-item {% if loop.first %}active{% endif %}">
+      <img
+        src="{{ url_for('static', filename='img/carousel/' ~ img) }}"
+        class="d-block w-100"
+        alt="Пейзаж {{ loop.index }}"
+      />
+    </div>
+    {% endfor %}
+  </div>
+  <a
+    class="carousel-control-prev"
+    href="#paysages"
+    role="button"
+    data-slide="prev"
+  >
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="sr-only">Предыдущий</span>
+  </a>
+  <a
+    class="carousel-control-next"
+    href="#paysages"
+    role="button"
+    data-slide="next"
+  >
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="sr-only">Следующий</span>
+  </a>
+</div>
+{% else %}
+<p class="text-center">Пока нет загруженных изображений.</p>
+{% endif %}
+<form method="post" enctype="multipart/form-data" class="mb-4 upload-paysages">
+  <label for="file" class="form-label">Добавить картинку</label>
+  <input type="file" name="file" class="form-control-file d-inline-block" />
+  <br /><br />
+  <button type="submit" class="btn btn-primary">Загрузить</button>
+</form>
+{% endblock %}
